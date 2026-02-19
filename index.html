@@ -7,432 +7,137 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #fdf6f0;
-    --card: #ffffff;
-    --border: #f0ddd4;
-    --accent: #e8a598;
-    --accent2: #b5c9bf;
-    --accent3: #d4afc8;
-    --text: #3a2f2f;
-    --muted: #a08c88;
-    --rutuja: #e8a598;
-    --tanmay: #8db3a8;
+    --bg: #fdf6f0; --card: #ffffff; --border: #f0ddd4;
+    --accent: #e8a598; --accent3: #d4afc8;
+    --text: #3a2f2f; --muted: #a08c88;
+    --rutuja: #e8a598; --tanmay: #8db3a8;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Jost', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
+    background: var(--bg); color: var(--text);
+    font-family: 'Jost', sans-serif; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 2rem;
     background-image:
       radial-gradient(ellipse at 10% 10%, rgba(232,165,152,0.18) 0%, transparent 50%),
       radial-gradient(ellipse at 90% 90%, rgba(181,201,191,0.2) 0%, transparent 50%),
       radial-gradient(ellipse at 80% 10%, rgba(212,175,200,0.15) 0%, transparent 40%);
   }
-
-  .quiz-wrap {
-    width: 100%;
-    max-width: 640px;
-  }
-
-  /* Floating decorations */
-  .deco {
-    position: fixed;
-    font-size: 1.5rem;
-    opacity: 0.18;
-    pointer-events: none;
-    animation: float 6s ease-in-out infinite;
-  }
-  .deco:nth-child(1) { top: 8%; left: 5%; animation-delay: 0s; }
-  .deco:nth-child(2) { top: 15%; right: 8%; animation-delay: 1s; font-size: 1.1rem; }
-  .deco:nth-child(3) { bottom: 20%; left: 7%; animation-delay: 2s; font-size: 1.2rem; }
-  .deco:nth-child(4) { bottom: 10%; right: 5%; animation-delay: 0.5s; }
-  .deco:nth-child(5) { top: 45%; left: 2%; animation-delay: 1.5s; font-size: 1rem; }
-  .deco:nth-child(6) { top: 50%; right: 3%; animation-delay: 2.5s; font-size: 0.9rem; }
-
-  @keyframes float {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-12px) rotate(5deg); }
-  }
+  .quiz-wrap { width: 100%; max-width: 660px; }
+  .deco { position: fixed; font-size: 1.5rem; opacity: 0.18; pointer-events: none; animation: float 6s ease-in-out infinite; }
+  .deco:nth-child(1) { top:8%; left:5%; }
+  .deco:nth-child(2) { top:15%; right:8%; animation-delay:1s; font-size:1.1rem; }
+  .deco:nth-child(3) { bottom:20%; left:7%; animation-delay:2s; font-size:1.2rem; }
+  .deco:nth-child(4) { bottom:10%; right:5%; animation-delay:0.5s; }
+  .deco:nth-child(5) { top:45%; left:2%; animation-delay:1.5s; font-size:1rem; }
+  .deco:nth-child(6) { top:50%; right:3%; animation-delay:2.5s; font-size:0.9rem; }
+  @keyframes float { 0%,100%{transform:translateY(0) rotate(0deg)} 50%{transform:translateY(-12px) rotate(5deg)} }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
   /* INTRO */
-  #intro { text-align: center; animation: fadeUp 0.7s ease both; }
-
-  .baby-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    display: block;
-    animation: bounce 2s ease-in-out infinite;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-  }
-
-  .eyebrow {
-    font-size: 0.72rem;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1rem;
-    font-weight: 400;
-  }
-
-  h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 6vw, 3rem);
-    line-height: 1.15;
-    margin-bottom: 0.5rem;
-    color: var(--text);
-  }
-
-  h1 em {
-    font-style: italic;
-    color: var(--accent);
-  }
-
-  .subtitle {
-    color: var(--muted);
-    font-size: 0.92rem;
-    font-weight: 300;
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
-  }
-
-  .couple-preview {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-
-  .name-pill {
-    padding: 0.5rem 1.4rem;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-  }
-
-  .pill-r { background: rgba(232,165,152,0.2); color: var(--rutuja); border: 1.5px solid rgba(232,165,152,0.4); }
-  .pill-t { background: rgba(141,179,168,0.2); color: var(--tanmay); border: 1.5px solid rgba(141,179,168,0.4); }
-
-  .or-badge {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 1.1rem;
-    color: var(--muted);
-  }
-
-  .btn {
-    background: var(--accent);
-    color: white;
-    border: none;
-    padding: 0.9rem 2.8rem;
-    border-radius: 50px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 500;
-    font-size: 0.9rem;
-    letter-spacing: 0.08em;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(232,165,152,0.35);
-  }
-
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(232,165,152,0.45);
-  }
+  #intro { text-align:center; animation:fadeUp 0.7s ease both; }
+  .baby-icon { font-size:3rem; margin-bottom:1rem; display:block; animation:bounce 2s ease-in-out infinite; }
+  .eyebrow { font-size:0.72rem; letter-spacing:0.3em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; }
+  h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,6vw,3rem); line-height:1.15; margin-bottom:0.5rem; }
+  h1 em { font-style:italic; color:var(--accent); }
+  .subtitle { color:var(--muted); font-size:0.92rem; font-weight:300; margin-bottom:2rem; line-height:1.6; }
+  .couple-preview { display:flex; align-items:center; justify-content:center; gap:1.5rem; margin-bottom:2rem; }
+  .name-pill { padding:0.5rem 1.4rem; border-radius:50px; font-size:0.9rem; font-weight:500; }
+  .pill-r { background:rgba(232,165,152,0.2); color:var(--rutuja); border:1.5px solid rgba(232,165,152,0.4); }
+  .pill-t { background:rgba(141,179,168,0.2); color:var(--tanmay); border:1.5px solid rgba(141,179,168,0.4); }
+  .or-badge { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.1rem; color:var(--muted); }
+  .name-input-wrap { margin-bottom:2rem; }
+  .name-label { display:block; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.6rem; }
+  .name-input { width:100%; max-width:320px; padding:0.85rem 1.2rem; border:1.5px solid var(--border); border-radius:50px; background:var(--card); color:var(--text); font-family:'Jost',sans-serif; font-size:0.95rem; text-align:center; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+  .name-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(232,165,152,0.15); }
+  .name-input::placeholder { color:#cdbfbb; }
+  .input-error { color:#e07070; font-size:0.78rem; margin-top:0.5rem; display:none; }
+  .btn { background:var(--accent); color:white; border:none; padding:0.9rem 2.8rem; border-radius:50px; font-family:'Jost',sans-serif; font-weight:500; font-size:0.9rem; letter-spacing:0.08em; cursor:pointer; transition:transform 0.2s,box-shadow 0.2s; box-shadow:0 4px 20px rgba(232,165,152,0.35); }
+  .btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(232,165,152,0.45); }
 
   /* QUIZ */
-  #quiz { display: none; }
-
-  .question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.2rem;
-    animation: fadeUp 0.4s ease both;
-  }
-
-  .q-counter {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .score-pill {
-    background: rgba(232,165,152,0.15);
-    border: 1px solid rgba(232,165,152,0.3);
-    color: var(--accent);
-    font-size: 0.75rem;
-    padding: 0.25rem 0.8rem;
-    border-radius: 50px;
-    letter-spacing: 0.05em;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 4px;
-    background: var(--border);
-    margin-bottom: 2rem;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--rutuja), var(--accent3), var(--tanmay));
-    border-radius: 4px;
-    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  .question-card {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    padding: 2.2rem 2rem;
-    margin-bottom: 1.2rem;
-    box-shadow: 0 4px 30px rgba(160,120,110,0.08);
-    animation: fadeUp 0.4s ease both;
-  }
-
-  .q-number {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 0.75rem;
-    font-weight: 500;
-  }
-
-  .question-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.45rem;
-    line-height: 1.4;
-    margin-bottom: 1.8rem;
-    color: var(--text);
-  }
-
-  .options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.9rem;
-  }
-
-  .option {
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    color: var(--text);
-    padding: 1.1rem 1rem;
-    text-align: center;
-    cursor: pointer;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 400;
-    transition: all 0.2s;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-  }
-
-  .option-emoji { font-size: 1.5rem; }
-
-  .option:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(160,120,110,0.12);
-  }
-
-  .option.rutuja-hover:hover:not(:disabled) {
-    border-color: var(--rutuja);
-    background: rgba(232,165,152,0.08);
-  }
-
-  .option.tanmay-hover:hover:not(:disabled) {
-    border-color: var(--tanmay);
-    background: rgba(141,179,168,0.08);
-  }
-
-  .option.selected-r {
-    border-color: var(--rutuja);
-    background: rgba(232,165,152,0.12);
-    color: #c4736a;
-    font-weight: 500;
-  }
-
-  .option.selected-t {
-    border-color: var(--tanmay);
-    background: rgba(141,179,168,0.12);
-    color: #5a9187;
-    font-weight: 500;
-  }
-
-  .option:disabled { cursor: default; }
-
-  .nav-row {
-    display: flex;
-    justify-content: center;
-    margin-top: 0.5rem;
-  }
+  #quiz { display:none; }
+  .question-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; animation:fadeUp 0.4s ease both; }
+  .q-counter { font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+  .score-pill { background:rgba(232,165,152,0.15); border:1px solid rgba(232,165,152,0.3); color:var(--accent); font-size:0.75rem; padding:0.25rem 0.8rem; border-radius:50px; }
+  .progress-bar { width:100%; height:4px; background:var(--border); margin-bottom:2rem; border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--rutuja),var(--accent3),var(--tanmay)); border-radius:4px; transition:width 0.5s cubic-bezier(0.4,0,0.2,1); }
+  .question-card { background:var(--card); border:1.5px solid var(--border); border-radius:20px; padding:2.2rem 2rem; margin-bottom:1.2rem; box-shadow:0 4px 30px rgba(160,120,110,0.08); animation:fadeUp 0.4s ease both; }
+  .q-number { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent); margin-bottom:0.75rem; font-weight:500; }
+  .question-text { font-family:'Cormorant Garamond',serif; font-size:1.45rem; line-height:1.4; margin-bottom:1.8rem; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; }
+  .option { border:1.5px solid var(--border); border-radius:14px; color:var(--text); padding:1.1rem 1rem; text-align:center; cursor:pointer; font-family:'Jost',sans-serif; font-size:0.88rem; font-weight:400; transition:all 0.2s; background:var(--bg); display:flex; flex-direction:column; align-items:center; gap:0.4rem; }
+  .option-emoji { font-size:1.5rem; }
+  .option:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 6px 20px rgba(160,120,110,0.12); }
+  .option.rutuja-hover:hover:not(:disabled) { border-color:var(--rutuja); background:rgba(232,165,152,0.08); }
+  .option.tanmay-hover:hover:not(:disabled) { border-color:var(--tanmay); background:rgba(141,179,168,0.08); }
+  .option.selected-r { border-color:var(--rutuja); background:rgba(232,165,152,0.12); color:#c4736a; font-weight:500; }
+  .option.selected-t { border-color:var(--tanmay); background:rgba(141,179,168,0.12); color:#5a9187; font-weight:500; }
+  .option:disabled { cursor:default; }
+  .nav-row { display:flex; justify-content:center; margin-top:0.5rem; }
 
   /* RESULTS */
-  #results { display: none; animation: fadeUp 0.6s ease both; }
+  #results { display:none; animation:fadeUp 0.6s ease both; }
+  .result-top { text-align:center; margin-bottom:1.5rem; }
+  .result-big { font-size:3rem; margin-bottom:0.4rem; }
+  .player-greeting { font-size:0.8rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+  .result-title { font-family:'Cormorant Garamond',serif; font-size:2rem; margin-bottom:0.4rem; }
+  .result-sub { color:var(--muted); font-size:0.9rem; font-weight:300; margin-bottom:1rem; }
 
-  .result-top {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
+  .score-summary-card { background:var(--card); border:1.5px solid var(--border); border-radius:18px; padding:1.4rem 1.8rem; margin-bottom:1.2rem; box-shadow:0 4px 20px rgba(160,120,110,0.07); text-align:center; }
+  .score-summary-label { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+  .score-summary-num { font-family:'Cormorant Garamond',serif; font-size:2.2rem; color:var(--accent); line-height:1; margin-bottom:1rem; }
+  .score-bar-track { display:flex; height:10px; border-radius:50px; overflow:hidden; background:var(--border); margin-bottom:0.5rem; }
+  .score-bar-r { background:var(--rutuja); transition:width 1s cubic-bezier(0.4,0,0.2,1); }
+  .score-bar-t { background:var(--tanmay); transition:width 1s cubic-bezier(0.4,0,0.2,1) 0.1s; }
+  .score-bar-legend { display:flex; justify-content:space-between; font-size:0.72rem; }
+  .legend-r { color:var(--rutuja); font-weight:500; }
+  .legend-t { color:var(--tanmay); font-weight:500; }
 
-  .result-big { font-size: 3rem; margin-bottom: 0.5rem; }
+  .tally-cards { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.2rem; }
+  .tally-card { border-radius:18px; padding:1.3rem; text-align:center; }
+  .tally-card.rutuja-card { background:rgba(232,165,152,0.12); border:1.5px solid rgba(232,165,152,0.3); }
+  .tally-card.tanmay-card { background:rgba(141,179,168,0.12); border:1.5px solid rgba(141,179,168,0.3); }
+  .tally-name { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+  .tally-num { font-family:'Cormorant Garamond',serif; font-size:2.8rem; line-height:1; margin-bottom:0.2rem; }
+  .tally-card.rutuja-card .tally-num { color:var(--rutuja); }
+  .tally-card.tanmay-card .tally-num { color:var(--tanmay); }
+  .tally-label { font-size:0.75rem; color:var(--muted); font-weight:300; }
+  .tally-sub { font-size:0.68rem; color:var(--muted); margin-top:0.3rem; }
 
-  .result-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem;
-    margin-bottom: 0.4rem;
-  }
+  /* Poll */
+  .poll-section { margin-bottom:1.5rem; }
+  .poll-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .poll-title { font-size:0.72rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); }
+  .poll-voters { font-size:0.72rem; color:var(--muted); background:rgba(232,165,152,0.12); padding:0.2rem 0.7rem; border-radius:50px; border:1px solid rgba(232,165,152,0.25); }
+  .poll-loading { text-align:center; color:var(--muted); font-size:0.85rem; padding:1.5rem; }
+  .poll-card { background:var(--card); border:1.5px solid var(--border); border-radius:16px; padding:1.2rem 1.5rem; margin-bottom:0.8rem; box-shadow:0 2px 12px rgba(160,120,110,0.06); }
+  .poll-question { font-family:'Cormorant Garamond',serif; font-size:1.05rem; margin-bottom:1rem; line-height:1.4; }
+  .poll-bar-row { display:flex; flex-direction:column; gap:0.5rem; }
+  .poll-bar-item { display:flex; align-items:center; gap:0.7rem; font-size:0.82rem; }
+  .poll-bar-label { width:52px; font-weight:500; flex-shrink:0; }
+  .poll-bar-label.label-r { color:#c4736a; }
+  .poll-bar-label.label-t { color:#5a9187; }
+  .poll-bar-track2 { flex:1; height:8px; background:var(--border); border-radius:50px; overflow:hidden; }
+  .poll-bar-fill { height:100%; border-radius:50px; transition:width 0.9s cubic-bezier(0.4,0,0.2,1); width:0%; }
+  .fill-r { background:var(--rutuja); }
+  .fill-t { background:var(--tanmay); }
+  .poll-bar-pct { width:32px; text-align:right; color:var(--muted); font-size:0.75rem; flex-shrink:0; }
+  .poll-meta { font-size:0.7rem; color:var(--muted); margin-top:0.6rem; font-style:italic; display:flex; gap:0.5rem; flex-wrap:wrap; }
+  .pick-r { color:#c4736a; font-style:normal; font-weight:500; }
+  .pick-t { color:#5a9187; font-style:normal; font-weight:500; }
+  .winner-tag { background:rgba(232,165,152,0.12); border:1px solid rgba(232,165,152,0.3); color:#c4736a; font-size:0.68rem; padding:0.15rem 0.5rem; border-radius:50px; font-style:normal; font-weight:500; }
+  .winner-tag.wt { background:rgba(141,179,168,0.12); border-color:rgba(141,179,168,0.3); color:#5a9187; }
 
-  .result-sub {
-    color: var(--muted);
-    font-size: 0.9rem;
-    font-weight: 300;
-    margin-bottom: 2rem;
-  }
-
-  .tally-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .tally-card {
-    border-radius: 18px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-
-  .tally-card.rutuja-card {
-    background: rgba(232,165,152,0.12);
-    border: 1.5px solid rgba(232,165,152,0.3);
-  }
-
-  .tally-card.tanmay-card {
-    background: rgba(141,179,168,0.12);
-    border: 1.5px solid rgba(141,179,168,0.3);
-  }
-
-  .tally-name {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-
-  .tally-num {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 3rem;
-    line-height: 1;
-    margin-bottom: 0.3rem;
-  }
-
-  .tally-card.rutuja-card .tally-num { color: var(--rutuja); }
-  .tally-card.tanmay-card .tally-num { color: var(--tanmay); }
-
-  .tally-label {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-weight: 300;
-  }
-
-  .breakdown {
-    background: var(--card);
-    border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 1.8rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 20px rgba(160,120,110,0.07);
-  }
-
-  .breakdown-title {
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1.2rem;
-  }
-
-  .breakdown-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.7rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.85rem;
-    gap: 1rem;
-  }
-
-  .breakdown-item:last-child { border-bottom: none; }
-  .breakdown-q { flex: 1; color: var(--muted); font-weight: 300; }
-
-  .answer-tag {
-    font-size: 0.72rem;
-    font-weight: 500;
-    padding: 0.2rem 0.7rem;
-    border-radius: 50px;
-    white-space: nowrap;
-  }
-
-  .tag-r { background: rgba(232,165,152,0.15); color: #c4736a; border: 1px solid rgba(232,165,152,0.3); }
-  .tag-t { background: rgba(141,179,168,0.15); color: #5a9187; border: 1px solid rgba(141,179,168,0.3); }
-
-  .result-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-outline {
-    background: transparent;
-    border: 1.5px solid var(--border);
-    color: var(--muted);
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.88rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  .result-actions { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-top:1rem; }
+  .btn-outline { background:transparent; border:1.5px solid var(--border); color:var(--muted); padding:0.8rem 2rem; border-radius:50px; font-family:'Jost',sans-serif; font-size:0.88rem; cursor:pointer; transition:all 0.2s; }
+  .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
 </style>
 </head>
 <body>
 
-<!-- Decorations -->
-<div class="deco">🍼</div>
-<div class="deco">⭐</div>
-<div class="deco">🌸</div>
-<div class="deco">💛</div>
-<div class="deco">🌙</div>
-<div class="deco">🐣</div>
+<div class="deco">🍼</div><div class="deco">⭐</div><div class="deco">🌸</div>
+<div class="deco">💛</div><div class="deco">🌙</div><div class="deco">🐣</div>
 
 <div class="quiz-wrap">
 
@@ -440,12 +145,17 @@
   <div id="intro">
     <span class="baby-icon">👶</span>
     <p class="eyebrow">Baby Shower Quiz</p>
-    <h1>Who's More Likely?<br><em>Rutuja & Tanmay</em></h1>
-    <p class="subtitle">10 questions about the parents-to-be.<br>Vote for who you think it'll be!</p>
+    <h1>Who's More Likely?<br><em>Rutuja OR Tanmay</em></h1>
+    <p class="subtitle">10 questions about the parents-to-be.<br>Vote &amp; see how all guests compare after!</p>
     <div class="couple-preview">
       <span class="name-pill pill-r">Rutuja</span>
       <span class="or-badge">or</span>
       <span class="name-pill pill-t">Tanmay</span>
+    </div>
+    <div class="name-input-wrap">
+      <label class="name-label" for="player-name">Your Name</label>
+      <input class="name-input" id="player-name" type="text" placeholder="Enter your name..." maxlength="30" />
+      <div class="input-error" id="name-error">Please enter your name to continue!</div>
     </div>
     <button class="btn" onclick="startQuiz()">Let's Play 🎉</button>
   </div>
@@ -457,13 +167,11 @@
       <span class="score-pill" id="score-live">Rutuja: 0 · Tanmay: 0</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
-
     <div class="question-card">
       <div class="q-number" id="q-number">01 / 10</div>
       <div class="question-text" id="q-text"></div>
       <div class="options" id="options"></div>
     </div>
-
     <div class="nav-row">
       <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none">Next →</button>
     </div>
@@ -473,26 +181,45 @@
   <div id="results">
     <div class="result-top">
       <div class="result-big">🎊</div>
+      <div class="player-greeting" id="player-greeting"></div>
       <div class="result-title" id="result-title"></div>
       <div class="result-sub" id="result-sub"></div>
+    </div>
+
+    <div class="score-summary-card">
+      <div class="score-summary-label">Your Votes</div>
+      <div class="score-summary-num" id="score-summary-num"></div>
+      <div class="score-bar-track">
+        <div class="score-bar-r" id="score-bar-r" style="width:0%"></div>
+        <div class="score-bar-t" id="score-bar-t" style="width:0%"></div>
+      </div>
+      <div class="score-bar-legend" style="margin-top:0.5rem">
+        <span class="legend-r">Rutuja</span>
+        <span class="legend-t">Tanmay</span>
+      </div>
     </div>
 
     <div class="tally-cards">
       <div class="tally-card rutuja-card">
         <div class="tally-name">Rutuja</div>
-        <div class="tally-num" id="r-count">0</div>
-        <div class="tally-label">votes</div>
+        <div class="tally-num" id="r-total">—</div>
+        <div class="tally-label">total votes</div>
+        <div class="tally-sub" id="r-total-sub"></div>
       </div>
       <div class="tally-card tanmay-card">
         <div class="tally-name">Tanmay</div>
-        <div class="tally-num" id="t-count">0</div>
-        <div class="tally-label">votes</div>
+        <div class="tally-num" id="t-total">—</div>
+        <div class="tally-label">total votes</div>
+        <div class="tally-sub" id="t-total-sub"></div>
       </div>
     </div>
 
-    <div class="breakdown">
-      <div class="breakdown-title">Your Answers</div>
-      <div id="breakdown-list"></div>
+    <div class="poll-section">
+      <div class="poll-header">
+        <span class="poll-title">Guest Poll — Per Question</span>
+        <span class="poll-voters" id="poll-voters">Loading...</span>
+      </div>
+      <div id="poll-cards"><div class="poll-loading">⏳ Loading guest responses...</div></div>
     </div>
 
     <div class="result-actions">
@@ -505,24 +232,34 @@
 
 <script>
 const questions = [
-  { q: "Who is more likely to be the stricter parent?", emojis: ["👩‍⚖️", "👨‍⚖️"] },
-  { q: "Who will be responsible for the most diaper changes?", emojis: ["🙋‍♀️", "🙋‍♂️"] },
-  { q: "Who will be the first to cry at the baby milestones?", emojis: ["😭", "😭"] },
-  { q: "Who will be more likely to take a million photos of the baby?", emojis: ["📸", "📷"] },
-  { q: "Who will be better at calming the baby?", emojis: ["🤱", "👨‍🍼"] },
-  { q: "Who is more likely to wake up for midnight feedings?", emojis: ["🌙", "⭐"] },
-  { q: "Who will be the 'fun' parent?", emojis: ["🎉", "🎈"] },
-  { q: "Who is more likely to baby-proof the entire house?", emojis: ["🔒", "🛡️"] },
-  { q: "Who suggested the baby's name?", emojis: ["💡", "✨"] },
-  { q: "Who is more likely to be found singing lullabies?", emojis: ["🎵", "🎶"] },
+  { q: "Who is more likely to be the stricter parent?",               emojis:["👩‍⚖️","👨‍⚖️"] },
+  { q: "Who will be responsible for the most diaper changes?",        emojis:["🙋‍♀️","🙋‍♂️"] },
+  { q: "Who will be the first to cry at the baby milestones?",        emojis:["😭","😭"] },
+  { q: "Who will be more likely to take a million photos of the baby?",emojis:["📸","📷"] },
+  { q: "Who will be better at calming the baby?",                     emojis:["🤱","👨‍🍼"] },
+  { q: "Who is more likely to wake up for midnight feedings?",         emojis:["🌙","⭐"] },
+  { q: "Who will be the 'fun' parent?",                               emojis:["🎉","🎈"] },
+  { q: "Who is more likely to baby-proof the entire house?",           emojis:["🔒","🛡️"] },
+  { q: "Who suggested the baby's name?",                              emojis:["💡","✨"] },
+  { q: "Who is more likely to be found singing lullabies?",           emojis:["🎵","🎶"] },
 ];
 
-let current = 0;
-let rScore = 0;
-let tScore = 0;
-let userAnswers = [];
+const STORAGE_KEY = 'babyshower-votes-v1';
+let current = 0, rScore = 0, tScore = 0, userAnswers = [], playerName = '';
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('player-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') startQuiz();
+  });
+});
 
 function startQuiz() {
+  playerName = document.getElementById('player-name').value.trim();
+  if (!playerName) {
+    document.getElementById('name-error').style.display = 'block';
+    document.getElementById('player-name').focus(); return;
+  }
+  document.getElementById('name-error').style.display = 'none';
   document.getElementById('intro').style.display = 'none';
   document.getElementById('quiz').style.display = 'block';
   loadQuestion();
@@ -530,109 +267,153 @@ function startQuiz() {
 
 function loadQuestion() {
   const q = questions[current];
-  document.getElementById('q-counter').textContent = `Question ${current + 1} of ${questions.length}`;
-  document.getElementById('q-number').textContent = `${String(current+1).padStart(2,'0')} / ${questions.length}`;
-  document.getElementById('q-text').textContent = q.q;
-  document.getElementById('progress').style.width = `${(current / questions.length) * 100}%`;
+  document.getElementById('q-counter').textContent = `Question ${current+1} of ${questions.length}`;
+  document.getElementById('q-number').textContent  = `${String(current+1).padStart(2,'0')} / ${questions.length}`;
+  document.getElementById('q-text').textContent    = q.q;
+  document.getElementById('progress').style.width  = `${(current/questions.length)*100}%`;
   document.getElementById('next-btn').style.display = 'none';
   document.getElementById('score-live').textContent = `Rutuja: ${rScore} · Tanmay: ${tScore}`;
 
-  const optionsEl = document.getElementById('options');
-  optionsEl.innerHTML = '';
+  const el = document.getElementById('options');
+  el.innerHTML = '';
+  const rBtn = document.createElement('button');
+  rBtn.className = 'option rutuja-hover';
+  rBtn.innerHTML = `<span class="option-emoji">${q.emojis[0]}</span>Rutuja`;
+  const tBtn = document.createElement('button');
+  tBtn.className = 'option tanmay-hover';
+  tBtn.innerHTML = `<span class="option-emoji">${q.emojis[1]}</span>Tanmay`;
+  rBtn.onclick = () => pick('rutuja', rBtn, tBtn);
+  tBtn.onclick = () => pick('tanmay', rBtn, tBtn);
+  el.appendChild(rBtn); el.appendChild(tBtn);
 
-  const rutujaBtn = document.createElement('button');
-  rutujaBtn.className = 'option rutuja-hover';
-  rutujaBtn.innerHTML = `<span class="option-emoji">${q.emojis[0]}</span>Rutuja`;
-  rutujaBtn.onclick = () => selectAnswer('rutuja', rutujaBtn, tanmayBtn);
-  optionsEl.appendChild(rutujaBtn);
-
-  const tanmayBtn = document.createElement('button');
-  tanmayBtn.className = 'option tanmay-hover';
-  tanmayBtn.innerHTML = `<span class="option-emoji">${q.emojis[1]}</span>Tanmay`;
-  tanmayBtn.onclick = () => selectAnswer('tanmay', rutujaBtn, tanmayBtn);
-  optionsEl.appendChild(tanmayBtn);
-
-  // Re-trigger animation
   const card = document.querySelector('.question-card');
-  card.style.animation = 'none';
-  card.offsetHeight;
-  card.style.animation = '';
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
 }
 
-function selectAnswer(choice, rutujaBtn, tanmayBtn) {
-  rutujaBtn.disabled = true;
-  tanmayBtn.disabled = true;
-
-  if (choice === 'rutuja') {
-    rutujaBtn.classList.add('selected-r');
-    rScore++;
-  } else {
-    tanmayBtn.classList.add('selected-t');
-    tScore++;
-  }
-
+function pick(choice, rBtn, tBtn) {
+  rBtn.disabled = tBtn.disabled = true;
+  if (choice === 'rutuja') { rBtn.classList.add('selected-r'); rScore++; }
+  else                     { tBtn.classList.add('selected-t'); tScore++; }
   userAnswers.push(choice);
   document.getElementById('score-live').textContent = `Rutuja: ${rScore} · Tanmay: ${tScore}`;
-
-  const nextBtn = document.getElementById('next-btn');
-  nextBtn.style.display = 'block';
-  nextBtn.textContent = current < questions.length - 1 ? 'Next →' : 'See Results 🎊';
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'block';
+  nb.textContent = current < questions.length - 1 ? 'Next \u2192' : 'See Results \uD83C\uDF8A';
 }
 
 function nextQuestion() {
   current++;
-  if (current < questions.length) {
-    loadQuestion();
-  } else {
-    showResults();
-  }
+  current < questions.length ? loadQuestion() : showResults();
 }
 
-function showResults() {
+async function showResults() {
   document.getElementById('quiz').style.display = 'none';
-  const res = document.getElementById('results');
-  res.style.display = 'block';
+  document.getElementById('results').style.display = 'block';
 
-  document.getElementById('r-count').textContent = rScore;
-  document.getElementById('t-count').textContent = tScore;
+  // Personal summary
+  document.getElementById('player-greeting').textContent   = playerName + "'s Results";
+  document.getElementById('score-summary-num').textContent = rScore + ' Rutuja \u00B7 ' + tScore + ' Tanmay';
+  document.getElementById('result-title').textContent =
+    rScore > tScore ? 'Rutuja takes the crown! \uD83D\uDC51' :
+    tScore > rScore ? 'Tanmay steals the show! \uD83D\uDC51' : "It's a perfect tie! \uD83E\uDD1D";
+  document.getElementById('result-sub').textContent =
+    rScore > tScore ? playerName + ' thinks Rutuja will be the MVP parent with ' + rScore + '/10 votes!' :
+    tScore > rScore ? playerName + ' thinks Tanmay will be the MVP parent with ' + tScore + '/10 votes!' :
+                      playerName + " thinks they'll be equal partners \u2014 lucky baby!";
 
-  let title, sub;
-  if (rScore > tScore) {
-    title = "Rutuja takes the crown! 👑";
-    sub = `With ${rScore} out of 10 votes, Rutuja is predicted to be the MVP parent!`;
-  } else if (tScore > rScore) {
-    title = "Tanmay steals the show! 👑";
-    sub = `With ${tScore} out of 10 votes, Tanmay is predicted to be the MVP parent!`;
-  } else {
-    title = "It's a perfect tie! 🤝";
-    sub = "Equal partners all the way — this baby is so lucky!";
+  setTimeout(() => {
+    document.getElementById('score-bar-r').style.width = ((rScore/questions.length)*100) + '%';
+    document.getElementById('score-bar-t').style.width = ((tScore/questions.length)*100) + '%';
+  }, 200);
+
+  await saveVotes();
+  await loadPoll();
+}
+
+async function saveVotes() {
+  try {
+    let all = {};
+    try { const r = await window.storage.get(STORAGE_KEY, true); all = JSON.parse(r.value); } catch(e) {}
+    all[playerName] = userAnswers;
+    await window.storage.set(STORAGE_KEY, JSON.stringify(all), true);
+  } catch(e) { console.warn('Save failed', e); }
+}
+
+async function loadPoll() {
+  const container = document.getElementById('poll-cards');
+  try {
+    let all = {};
+    try { const r = await window.storage.get(STORAGE_KEY, true); all = JSON.parse(r.value); } catch(e) {}
+
+    const guests = Object.keys(all);
+    const n = guests.length;
+
+    // Aggregate
+    const counts = questions.map(() => ({ r: 0, t: 0 }));
+    let totalR = 0, totalT = 0;
+    guests.forEach(g => {
+      (all[g] || []).forEach((ans, i) => {
+        if (ans === 'rutuja') { counts[i].r++; totalR++; }
+        else                  { counts[i].t++; totalT++; }
+      });
+    });
+
+    document.getElementById('r-total').textContent    = totalR;
+    document.getElementById('t-total').textContent    = totalT;
+    document.getElementById('r-total-sub').textContent = 'across ' + n + ' guest' + (n!==1?'s':'');
+    document.getElementById('t-total-sub').textContent = 'across ' + n + ' guest' + (n!==1?'s':'');
+    document.getElementById('poll-voters').textContent  = n + ' guest' + (n!==1?'s':'') + ' voted';
+
+    container.innerHTML = '';
+    questions.forEach((q, i) => {
+      const rc = counts[i].r, tc = counts[i].t, tot = rc + tc || 1;
+      const rPct = Math.round((rc/tot)*100), tPct = 100 - rPct;
+      const myPick = userAnswers[i];
+      const leader = rc > tc ? 'Rutuja' : tc > rc ? 'Tanmay' : null;
+
+      const card = document.createElement('div');
+      card.className = 'poll-card';
+      card.innerHTML =
+        '<div class="poll-question">' + (i+1) + '. ' + q.q + '</div>' +
+        '<div class="poll-bar-row">' +
+          '<div class="poll-bar-item">' +
+            '<span class="poll-bar-label label-r">Rutuja</span>' +
+            '<div class="poll-bar-track2"><div class="poll-bar-fill fill-r" data-w="' + rPct + '%" style="width:0%"></div></div>' +
+            '<span class="poll-bar-pct">' + rPct + '%</span>' +
+          '</div>' +
+          '<div class="poll-bar-item">' +
+            '<span class="poll-bar-label label-t">Tanmay</span>' +
+            '<div class="poll-bar-track2"><div class="poll-bar-fill fill-t" data-w="' + tPct + '%" style="width:0%"></div></div>' +
+            '<span class="poll-bar-pct">' + tPct + '%</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="poll-meta">' +
+          'Your pick: <span class="' + (myPick==='rutuja'?'pick-r':'pick-t') + '">' + (myPick==='rutuja'?'Rutuja':'Tanmay') + '</span>' +
+          (leader
+            ? ' &nbsp;·&nbsp; Most guests: <span class="winner-tag' + (leader==='Tanmay'?' wt':'') + '">' + leader + '</span>'
+            : ' &nbsp;·&nbsp; Tied!') +
+          ' &nbsp;·&nbsp; ' + (rc+tc) + ' vote' + ((rc+tc)!==1?'s':'') +
+        '</div>';
+      container.appendChild(card);
+    });
+
+    // Animate bars
+    setTimeout(() => {
+      container.querySelectorAll('.poll-bar-fill').forEach(b => { b.style.width = b.dataset.w; });
+    }, 150);
+
+  } catch(e) {
+    console.warn('Poll load failed', e);
+    container.innerHTML = '<div class="poll-loading">Could not load guest poll results.</div>';
   }
-
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent = sub;
-
-  const list = document.getElementById('breakdown-list');
-  list.innerHTML = '';
-  questions.forEach((q, i) => {
-    const isR = userAnswers[i] === 'rutuja';
-    const el = document.createElement('div');
-    el.className = 'breakdown-item';
-    el.innerHTML = `
-      <div class="breakdown-q">${q.q}</div>
-      <span class="answer-tag ${isR ? 'tag-r' : 'tag-t'}">${isR ? 'Rutuja' : 'Tanmay'}</span>
-    `;
-    list.appendChild(el);
-  });
 }
 
 function shareResult() {
   const winner = rScore > tScore ? 'Rutuja' : tScore > rScore ? 'Tanmay' : 'Both equally';
-  const text = `🍼 Rutuja & Tanmay Baby Shower Quiz\nI voted:\n• Rutuja: ${rScore}/10\n• Tanmay: ${tScore}/10\n🏆 My MVP parent pick: ${winner}!`;
+  const text = '🍼 Rutuja & Tanmay Baby Shower Quiz\n' + playerName + "'s votes:\n\u2022 Rutuja: " + rScore + '/10\n\u2022 Tanmay: ' + tScore + '/10\n\uD83C\uDFC6 MVP parent pick: ' + winner + '!';
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => alert('Results copied to clipboard! Share with the group 💌'));
-  } else {
-    alert(text);
-  }
+    navigator.clipboard.writeText(text).then(() => alert('Results copied! Share with the group 💌'));
+  } else { alert(text); }
 }
 </script>
 </body>
