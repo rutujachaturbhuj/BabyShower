@@ -46,14 +46,8 @@
   .name-input::placeholder{color:#cdbfbb}
   .input-error{color:#e07070;font-size:.78rem;margin-top:.5rem;display:none}
 
-  /* SETUP BANNER */
-  .setup-notice{background:rgba(232,165,152,.1);border:1.5px solid rgba(232,165,152,.3);border-radius:14px;padding:1rem 1.2rem;margin-bottom:1.5rem;font-size:.82rem;color:var(--muted);line-height:1.6;display:none}
-  .setup-notice strong{color:var(--text)}
-  .setup-notice input{width:100%;margin-top:.6rem;padding:.6rem 1rem;border:1.5px solid var(--border);border-radius:50px;font-family:'Jost',sans-serif;font-size:.82rem;outline:none;background:var(--card);color:var(--text);transition:border-color .2s}
-  .setup-notice input:focus{border-color:var(--accent)}
-  .setup-notice input::placeholder{color:#cdbfbb}
-  .setup-toggle{font-size:.75rem;color:var(--accent);cursor:pointer;text-decoration:underline;display:block;margin-bottom:.5rem}
-
+  .intro-outline{background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:.75rem 2rem;border-radius:50px;font-family:'Jost',sans-serif;font-size:.88rem;cursor:pointer;transition:all .2s}
+  .intro-outline:hover{border-color:var(--accent);color:var(--accent)}
   .btn{background:var(--accent);color:#fff;border:none;padding:.9rem 2.8rem;border-radius:50px;font-family:'Jost',sans-serif;font-weight:500;font-size:.9rem;letter-spacing:.08em;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 20px rgba(232,165,152,.35)}
   .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(232,165,152,.45)}
 
@@ -157,14 +151,9 @@
       <input class="name-input" id="player-name" type="text" placeholder="Enter your name..." maxlength="30"/>
       <div class="input-error" id="name-error">Please enter your name to continue!</div>
     </div>
-    <span class="setup-toggle" onclick="toggleSetup()">⚙️ Set Google Sheet URL (one-time setup)</span>
-    <div class="setup-notice" id="setup-notice">
-      <strong>One-time setup:</strong> Paste your Google Apps Script Web App URL below.<br>
-      See the <em>SETUP INSTRUCTIONS</em> file for how to get this URL.
-      <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/YOUR_ID/exec" />
-    </div>
-    <br>
     <button class="btn" onclick="startQuiz()">Let's Play 🎉</button>
+    <br><br>
+    <button class="intro-outline" onclick="viewResultsOnly()">📊 View Guest Poll Results</button>
   </div>
 
   <!-- QUIZ -->
@@ -243,7 +232,7 @@
 // ── PASTE YOUR GOOGLE APPS SCRIPT URL HERE ──────────────────
 // After deploying, replace the empty string below with your URL
 // e.g. "https://script.google.com/macros/s/ABC123/exec"
-let SCRIPT_URL = localStorage.getItem('babyquiz-script-url') || 'https://script.google.com/macros/s/AKfycbxtXq_hcMYYgGQ9y76wbnsPtdSRnQrLNuYz0DybrHsQg-xcH6zC6AYg7CBjGG5qtMdw/exec';
+let SCRIPT_URL = localStorage.getItem('babyquiz-script-url') || '';
 // ────────────────────────────────────────────────────────────
 
 const questions = [
@@ -261,31 +250,13 @@ const questions = [
 
 let current=0, rScore=0, tScore=0, userAnswers=[], playerName='';
 
-function toggleSetup() {
-  const el = document.getElementById('setup-notice');
-  el.style.display = el.style.display === 'block' ? 'none' : 'block';
-  if (el.style.display === 'block') {
-    document.getElementById('script-url-input').value = SCRIPT_URL;
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('player-name').addEventListener('keydown', e => {
     if (e.key === 'Enter') startQuiz();
   });
-  // Load saved URL
-  const saved = localStorage.getItem('babyquiz-script-url');
-  if (saved) SCRIPT_URL = saved;
 });
 
 function startQuiz() {
-  // Save script URL if entered
-  const urlInput = document.getElementById('script-url-input').value.trim();
-  if (urlInput) {
-    SCRIPT_URL = urlInput;
-    localStorage.setItem('babyquiz-script-url', SCRIPT_URL);
-  }
-
   playerName = document.getElementById('player-name').value.trim();
   if (!playerName) {
     document.getElementById('name-error').style.display = 'block';
@@ -384,14 +355,14 @@ async function saveAndLoadPoll() {
   try {
     const res  = await fetch(SCRIPT_URL+'?t='+Date.now());
     const data = await res.json();
-    renderPoll(data);
+    renderPoll(data, false);
   } catch(e) {
     console.warn('Poll load failed:', e);
     container.innerHTML = '<div class="poll-error">Could not load poll results. Check your Apps Script URL.</div>';
   }
 }
 
-function renderPoll(data) {
+function renderPoll(data, viewOnly=false) {
   const { guests=[], counts=[] } = data;
   const n = guests.length;
   let totalR=0, totalT=0;
@@ -429,7 +400,7 @@ function renderPoll(data) {
           '<span class="poll-bar-pct">'+tPct+'%</span>'+
         '</div>'+
       '</div>'+
-      '<div class="poll-meta">'+
+      '<div class="poll-meta"'+( viewOnly ? ' style="display:none"' : '')+'>'+
         'Your pick: <span class="'+(myPick==='rutuja'?'pick-r':'pick-t')+'">'+(myPick==='rutuja'?'Rutuja':'Tanmay')+'</span>'+
         (leader
           ? ' &nbsp;·&nbsp; Most guests: <span class="winner-tag'+(leader==='Tanmay'?' wt':'')+'">' +leader+'</span>'
@@ -442,6 +413,43 @@ function renderPoll(data) {
   setTimeout(() => {
     container.querySelectorAll('.poll-bar-fill').forEach(b => { b.style.width = b.dataset.w; });
   }, 100);
+}
+
+function viewResultsOnly() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  // Hide personal score section, show only poll
+  document.getElementById('player-greeting').textContent  = 'Live Guest Poll';
+  document.getElementById('result-title').textContent     = 'How guests are voting 📊';
+  document.getElementById('result-sub').textContent       = 'Results update as more guests complete the quiz.';
+  document.getElementById('result-big').textContent       = '📊';
+  document.querySelector('.score-summary-card').style.display = 'none';
+
+  // Fill dummy userAnswers so renderPoll doesn't break "Your pick" labels
+  userAnswers = Array(questions.length).fill(null);
+
+  loadPollOnly();
+}
+
+async function loadPollOnly() {
+  const container = document.getElementById('poll-cards');
+
+  if (!SCRIPT_URL) {
+    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet. Add your Apps Script URL to the quiz file.</div>';
+    document.getElementById('poll-voters').textContent = 'Not connected';
+    document.getElementById('r-total').textContent = '—';
+    document.getElementById('t-total').textContent = '—';
+    return;
+  }
+
+  try {
+    const res  = await fetch(SCRIPT_URL + '?t=' + Date.now());
+    const data = await res.json();
+    renderPoll(data, true); // true = hide "Your pick" row
+  } catch(e) {
+    container.innerHTML = '<div class="poll-error">Could not load poll results. Check your Apps Script URL.</div>';
+  }
 }
 
 function shareResult() {
