@@ -232,7 +232,7 @@
 // ── PASTE YOUR GOOGLE APPS SCRIPT URL HERE ──────────────────
 // After deploying, replace the empty string below with your URL
 // e.g. "https://script.google.com/macros/s/ABC123/exec"
-let SCRIPT_URL = localStorage.getItem('babyquiz-script-url') || "https://script.google.com/macros/s/AKfycbyj6q0eqir2Xzf6LGppkK3m58dOS-4yBPKz3L1iLsw5Lxn-epx-WeMdZy9n-veVQUrQ/exec";
+let SCRIPT_URL = localStorage.getItem('babyquiz-script-url') || '';
 // ────────────────────────────────────────────────────────────
 
 const questions = [
@@ -313,6 +313,7 @@ async function showResults() {
   document.getElementById('quiz').style.display = 'none';
   document.getElementById('results').style.display = 'block';
 
+  // Show personal summary immediately — don't wait for poll
   document.getElementById('player-greeting').textContent   = playerName+"'s Results";
   document.getElementById('score-summary-num').textContent = rScore+' Rutuja · '+tScore+' Tanmay';
   document.getElementById('result-title').textContent =
@@ -328,7 +329,8 @@ async function showResults() {
     document.getElementById('score-bar-t').style.width = ((tScore/questions.length)*100)+'%';
   }, 200);
 
-  await saveAndLoadPoll();
+  // Load poll in background — page is already visible above
+  saveAndLoadPoll();
 }
 
 // ── JSONP helper — avoids CORS entirely ──
@@ -367,17 +369,16 @@ async function saveAndLoadPoll() {
     return;
   }
 
-  // POST guest answers and AWAIT it fully before fetching results
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({ name: playerName, answers: userAnswers }),
-      headers: { 'Content-Type': 'text/plain' }
-    });
-  } catch(e) { console.warn('Save failed:', e); }
+  // Fire POST without awaiting — no-cors responses are always opaque anyway
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({ name: playerName, answers: userAnswers }),
+    headers: { 'Content-Type': 'text/plain' }
+  }).catch(e => console.warn('Save failed:', e));
 
-  // Now fetch results
+  // Wait 2.5s to give Google time to write the row, then fetch results
+  await new Promise(r => setTimeout(r, 2500));
   await fetchAndRenderPoll(false);
 }
 
