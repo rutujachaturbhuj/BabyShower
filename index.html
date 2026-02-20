@@ -459,14 +459,12 @@ function viewResultsOnly() {
   document.getElementById('intro').style.display = 'none';
   document.getElementById('results').style.display = 'block';
 
-  // Hide personal score section, show only poll
-  document.getElementById('player-greeting').textContent  = 'Live Guest Poll';
-  document.getElementById('result-title').textContent     = 'How guests are voting 📊';
-  document.getElementById('result-sub').textContent       = 'Results update as more guests complete the quiz.';
-  document.getElementById('result-big').textContent       = '📊';
+  document.getElementById('player-greeting').textContent = 'Live Guest Poll';
+  document.getElementById('result-title').textContent    = 'How guests are voting 📊';
+  document.getElementById('result-sub').textContent      = 'Results update as more guests complete the quiz.';
+  document.getElementById('result-big').textContent      = '📊';
   document.querySelector('.score-summary-card').style.display = 'none';
 
-  // Fill dummy userAnswers so renderPoll doesn't break "Your pick" labels
   userAnswers = Array(questions.length).fill(null);
 
   loadPollOnly();
@@ -476,14 +474,24 @@ async function loadPollOnly() {
   const container = document.getElementById('poll-cards');
 
   if (!SCRIPT_URL) {
-    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet. Add your Apps Script URL to the quiz file.</div>';
+    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet.</div>';
     document.getElementById('poll-voters').textContent = 'Not connected';
     document.getElementById('r-total').textContent = '—';
     document.getElementById('t-total').textContent = '—';
     return;
   }
 
-  await fetchAndRenderPoll(true);
+  container.innerHTML = '<div class="poll-loading"><div class="spinner"></div> Fetching guest responses...</div>';
+
+  try {
+    const data = await jsonpFetch(SCRIPT_URL);
+    renderPoll(data, true);
+  } catch(e) {
+    console.warn('Poll load failed:', e);
+    container.innerHTML =
+      '<div class="poll-error">⚠️ Could not load poll results.<br><small>' + e.message + '</small><br><br>' +
+      '<button onclick="loadPollOnly()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
+  }
 }
 
 function shareResult() {
