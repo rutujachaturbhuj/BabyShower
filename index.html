@@ -331,34 +331,62 @@ async function showResults() {
   await saveAndLoadPoll();
 }
 
+// ── JSONP helper — avoids CORS entirely ──
+function jsonpFetch(url, timeoutMs=12000) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_cb_' + Date.now();
+    const script  = document.createElement('script');
+    let   done    = false;
+
+    const cleanup = () => {
+      done = true;
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
+
+    window[cbName] = (data) => { cleanup(); resolve(data); };
+
+    script.onerror = () => { cleanup(); reject(new Error('Script load error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cbName + '&t=' + Date.now();
+    document.head.appendChild(script);
+
+    setTimeout(() => {
+      if (!done) { cleanup(); reject(new Error('Timeout')); }
+    }, timeoutMs);
+  });
+}
+
 async function saveAndLoadPoll() {
   const container = document.getElementById('poll-cards');
 
   if (!SCRIPT_URL) {
-    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet.<br>Reload and enter your Apps Script URL to enable live polling.</div>';
+    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet.</div>';
     document.getElementById('poll-voters').textContent = 'Not connected';
     document.getElementById('r-total').textContent = '—';
     document.getElementById('t-total').textContent = '—';
     return;
   }
 
-  // POST this guest's answers
+  // POST guest answers (fire-and-forget, no-cors so it won't block)
   try {
-    await fetch(SCRIPT_URL, {
+    fetch(SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors',
       body: JSON.stringify({ name: playerName, answers: userAnswers }),
-      headers: { 'Content-Type': 'text/plain' } // avoids CORS preflight
+      headers: { 'Content-Type': 'text/plain' }
     });
   } catch(e) { console.warn('Save failed:', e); }
 
-  // GET all aggregated votes
+  // Small delay to give the POST a head start before we GET
+  await new Promise(r => setTimeout(r, 1200));
+
+  // GET via JSONP — bypasses CORS completely
   try {
-    const res  = await fetch(SCRIPT_URL+'?t='+Date.now());
-    const data = await res.json();
+    const data = await jsonpFetch(SCRIPT_URL);
     renderPoll(data, false);
   } catch(e) {
     console.warn('Poll load failed:', e);
-    container.innerHTML = '<div class="poll-error">Could not load poll results. Check your Apps Script URL.</div>';
+    container.innerHTML = '<div class="poll-error">⚠️ Could not load poll results.<br><small>'+e.message+'</small><br><br><button onclick="saveAndLoadPoll()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
   }
 }
 
@@ -444,11 +472,10 @@ async function loadPollOnly() {
   }
 
   try {
-    const res  = await fetch(SCRIPT_URL + '?t=' + Date.now());
-    const data = await res.json();
-    renderPoll(data, true); // true = hide "Your pick" row
+    const data = await jsonpFetch(SCRIPT_URL);
+    renderPoll(data, true);
   } catch(e) {
-    container.innerHTML = '<div class="poll-error">Could not load poll results. Check your Apps Script URL.</div>';
+    container.innerHTML = '<div class="poll-error">⚠️ Could not load poll results.<br><small>'+e.message+'</small><br><br><button onclick="loadPollOnly()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
   }
 }
 
