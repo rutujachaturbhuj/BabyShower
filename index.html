@@ -467,14 +467,29 @@ function viewResultsOnly() {
 
   userAnswers = Array(questions.length).fill(null);
 
+  // Debug: show what URL we're using
+  const container = document.getElementById('poll-cards');
+  container.innerHTML = '<div class="poll-loading"><div class="spinner"></div> Connecting to Google Sheet...</div>';
+  document.getElementById('poll-voters').textContent = 'Checking...';
+
+  console.log('SCRIPT_URL:', SCRIPT_URL);
+
+  if (!SCRIPT_URL || SCRIPT_URL.trim() === '') {
+    container.innerHTML = '<div class="poll-error">❌ SCRIPT_URL is empty. URL not found in file.</div>';
+    return;
+  }
+
+  // Show URL being used (first 60 chars)
+  document.getElementById('result-sub').textContent = 'Fetching from: ' + SCRIPT_URL.substring(0, 60) + '...';
+
   loadPollOnly();
 }
 
 async function loadPollOnly() {
   const container = document.getElementById('poll-cards');
 
-  if (!SCRIPT_URL) {
-    container.innerHTML = '<div class="poll-error">⚙️ No Google Sheet connected yet.</div>';
+  if (!SCRIPT_URL || SCRIPT_URL.trim() === '') {
+    container.innerHTML = '<div class="poll-error">❌ No Script URL found.</div>';
     document.getElementById('poll-voters').textContent = 'Not connected';
     document.getElementById('r-total').textContent = '—';
     document.getElementById('t-total').textContent = '—';
@@ -485,11 +500,13 @@ async function loadPollOnly() {
 
   try {
     const data = await jsonpFetch(SCRIPT_URL);
+    // Clear debug subtitle
+    document.getElementById('result-sub').textContent = 'Results update as more guests complete the quiz.';
     renderPoll(data, true);
   } catch(e) {
     console.warn('Poll load failed:', e);
     container.innerHTML =
-      '<div class="poll-error">⚠️ Could not load poll results.<br><small>' + e.message + '</small><br><br>' +
+      '<div class="poll-error">⚠️ Failed: ' + e.message + '<br><small>URL: ' + SCRIPT_URL.substring(0,80) + '</small><br><br>' +
       '<button onclick="loadPollOnly()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
   }
 }
