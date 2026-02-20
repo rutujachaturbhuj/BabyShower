@@ -367,9 +367,9 @@ async function saveAndLoadPoll() {
     return;
   }
 
-  // POST guest answers (fire-and-forget, no-cors so it won't block)
+  // POST guest answers and AWAIT it fully before fetching results
   try {
-    fetch(SCRIPT_URL, {
+    await fetch(SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
       body: JSON.stringify({ name: playerName, answers: userAnswers }),
@@ -377,16 +377,27 @@ async function saveAndLoadPoll() {
     });
   } catch(e) { console.warn('Save failed:', e); }
 
-  // Small delay to give the POST a head start before we GET
-  await new Promise(r => setTimeout(r, 1200));
+  // Now fetch results
+  await fetchAndRenderPoll(false);
+}
 
-  // GET via JSONP — bypasses CORS completely
+async function fetchAndRenderPoll(viewOnly, isRetry=false) {
+  const container = document.getElementById('poll-cards');
+  container.innerHTML = '<div class="poll-loading"><div class="spinner"></div> ' + (isRetry ? 'Retrying...' : 'Fetching guest responses...') + '</div>';
+
   try {
     const data = await jsonpFetch(SCRIPT_URL);
-    renderPoll(data, false);
+    renderPoll(data, viewOnly);
   } catch(e) {
     console.warn('Poll load failed:', e);
-    container.innerHTML = '<div class="poll-error">⚠️ Could not load poll results.<br><small>'+e.message+'</small><br><br><button onclick="saveAndLoadPoll()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
+    if (!isRetry) {
+      // Auto-retry once after 2s
+      setTimeout(() => fetchAndRenderPoll(viewOnly, true), 2000);
+    } else {
+      container.innerHTML =
+        '<div class="poll-error">⚠️ Could not load poll results.<br><small>' + e.message + '</small><br><br>' +
+        '<button onclick="fetchAndRenderPoll(' + viewOnly + ')" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
+    }
   }
 }
 
@@ -471,12 +482,7 @@ async function loadPollOnly() {
     return;
   }
 
-  try {
-    const data = await jsonpFetch(SCRIPT_URL);
-    renderPoll(data, true);
-  } catch(e) {
-    container.innerHTML = '<div class="poll-error">⚠️ Could not load poll results.<br><small>'+e.message+'</small><br><br><button onclick="loadPollOnly()" style="margin-top:.5rem;padding:.5rem 1.2rem;border-radius:50px;border:1.5px solid #e8a598;background:transparent;color:#e8a598;cursor:pointer;font-family:Jost,sans-serif">Retry</button></div>';
-  }
+  await fetchAndRenderPoll(true);
 }
 
 function shareResult() {
